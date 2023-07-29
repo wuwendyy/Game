@@ -1,0 +1,3 @@
+RoomName/isOn/record/ComfortLevel/furName,price,material,canBeOpen,isOpen,storeSpace,spaceUsed,isDamaged,food1*food2,toy1,tool1
+Room1/false/none/3/true/false/WOOD/wood chair,2,WOOD,false,2,2,false,PUPPUCCINO'1,NULL,RAG'1/wood table,2,WOOD,false,6,3,false,NULL,CARROT'1,TISSUE'1
+Room2/false/none/4/true/false/WOOD/bed,15,WOOD,false,10,0,false,NULL,NULL,NULL/cabinet,7,WOOD,false,20,3,false,KIBBLE'2-TIN'1,NULL,PLASTIC_BAG'3
