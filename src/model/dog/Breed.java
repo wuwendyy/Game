@@ -140,6 +140,19 @@ public class Breed {
 		return info;
 	}
 	
+	public String getCharacteristicToFileString() {
+		String info = "";
+		int i = 1;
+		for (Characteristic c : characteristics) {
+			if (i < characteristics.size()) {
+				info += c.name() + "-";
+			}else {
+				info += c.name();
+			}
+			i++;
+		}
+		return info;
+	}
 	
 	
 }

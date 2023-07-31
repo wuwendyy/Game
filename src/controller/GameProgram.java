@@ -97,15 +97,50 @@ public class GameProgram{
 
 	
 	private void clearData() {
-		resetFile("game");
-		resetFile("dog");
-		resetFile("home");
+		resetGameFile("src/file/game");
+		resetDogFile("src/file/dog");
+		resetHomeFile("src/file/home");
 	}
 
 
-	private void resetFile(String fileName) {
+	private void resetGameFile(String fileName) {
 		try (FileOutputStream fos = new FileOutputStream(fileName); PrintWriter out = new PrintWriter(fos)) {
-			out.println("NULL");
+//			out.print("money/workChosen/startTime\n");
+//			out.print("20/NULL/dd-MM-yyyy HH:mm:ss");
+			out. write(32);
+			System.out.println("Saved home to: " + fileName);
+			// catch Exception 1
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found, problem saving data... " + fileName);
+			// catch Exception 2
+		} catch (IOException e) {
+			System.err.println("Some other IO Problem happened while saving data... " + e);
+		} // ��files are closed automatically during try-with-resource
+	}
+
+
+	private void resetHomeFile(String fileName) {
+		try (FileOutputStream fos = new FileOutputStream(fileName); PrintWriter out = new PrintWriter(fos)) {
+//			out.print("RoomName/isOn/record/ComfortLevel/furName,price,material,isOpen,storeSpace,spaceUsed,isDamaged,food1*food2,toy1,tool1\n");
+//			out.print("Room1/false/none/3/true/false/WOOD/wood chair,2,WOOD,false,2,2,false,PUPPUCCINO'1,NULL,RAG'1/wood table,2,WOOD,false,6,3,false,NULL,CARROT'1,TISSUE'1\n");
+//			out.print("Room2/false/none/4/true/false/WOOD/bed,15,WOOD,false,10,0,false,NULL,NULL,NULL/cabinet,7,WOOD,false,20,3,false,KIBBLE'2-TIN'1,NULL,PLASTIC_BAG'3");
+			out. write(32);
+			System.out.println("Saved home to: " + fileName);
+			// catch Exception 1
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found, problem saving data... " + fileName);
+			// catch Exception 2
+		} catch (IOException e) {
+			System.err.println("Some other IO Problem happened while saving data... " + e);
+		} // ��files are closed automatically during try-with-resource
+	}
+
+
+	private void resetDogFile(String fileName) {
+		try (FileOutputStream fos = new FileOutputStream(fileName); PrintWriter out = new PrintWriter(fos)) {
+//			out.print("name/age/currentEL/currentWL/mood/friendship/destructivePower/currentSize/breedName,initialDP,maxSize,Personality1-Personality2-Personality3\n");
+//			out.print("NULL");
+			out. write(32);
 			System.out.println("Saved home to: " + fileName);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {
@@ -301,7 +336,7 @@ public class GameProgram{
 				Furniture f = Shop.matchStrToFur(name);
 				int num = h.inputInt("How many " + f.getName() + " do you want? (1~10)", 1, 10);
 				for (int i = 0; i < num; i++) {
-					game.buyItem(f, i+1);
+					game.buyItem(Shop.matchStrToFur(name), i+1);
 				}
 			}
 			quit = !h.inputYesNo("Do you want to continue buying furniture? (y/n)");
@@ -494,7 +529,7 @@ public class GameProgram{
 	// for system-wide data (player, money, time last left)
 	public void saveGameData(String gameFile, Game game) {
 		try (FileOutputStream fos = new FileOutputStream(gameFile); PrintWriter out = new PrintWriter(fos)) {
-			out.println(game.toFileString());
+			out.print(game.toFileString());
 			System.out.println("Saved game system info to: " + gameFile);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {
@@ -509,7 +544,7 @@ public class GameProgram{
 	// for information specific to dog
 	public void saveDogData(String dogFile, Set<Dog> dog) {
 		try (FileOutputStream fos = new FileOutputStream(dogFile); PrintWriter out = new PrintWriter(fos)) {
-			out.println(game.getDogstoFileString());
+			out.print(game.getDogstoFileString());
 			System.out.println("Saved dog(s) to: " + dogFile);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {
@@ -525,7 +560,7 @@ public class GameProgram{
 	public void saveHomeData(String homeFile, Home home) {
 		// TODO Auto-generated method stub
 		try (FileOutputStream fos = new FileOutputStream(homeFile); PrintWriter out = new PrintWriter(fos)) {
-			out.println(game.getHometoFileString());
+			out.print(game.getHometoFileString());
 			System.out.println("Saved home to: " + homeFile);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {

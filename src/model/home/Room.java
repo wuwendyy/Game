@@ -23,6 +23,7 @@ public class Room {
 	private static final int maxNumFur = 6;
 	private int spaceUsed;
 	
+	
 	public Room(String name, Door door, List<Furniture> furnitureList, int comfortLevel, Camera cam, Map<String, Integer> furnitureNumMap) {
 		super();
 		this.name = name;
@@ -55,8 +56,10 @@ public class Room {
 		Map<Integer, Furniture> map = new HashMap<>();
 		int i = 1;
 		for (Furniture f : furnitureList) {
-			map.put(i, f);
-			i++;
+			if (f.getSpaceUsed() < f.getStoreSpace()) {
+				map.put(i, f);
+				i++;
+			}
 		}
 		return map;
 	}
@@ -64,7 +67,7 @@ public class Room {
 	public String getIntToFurnitureMapString() {
 		String s = "";
 		for (Integer i : intToFurnitureMap.keySet()) {
-			s += i.toString() + ". " + intToFurnitureMap.get(i).getNameWithSpaceLeft() + "\n";
+			s += i.toString() + ". " + intToFurnitureMap.get(i) + " " + intToFurnitureMap.get(i).getNameWithSpaceLeft() + "\n";
 		}
 		return s;
 	}
@@ -79,9 +82,10 @@ public class Room {
 			}else {
 				furnitureNumMap.put(fur.getName(),furnitureNumMap.get(fur.getName())+1);
 			}
+			// find fur obj !!
 			this.intToFurnitureMap = createIntToFurnitureMap(furnitureList);
 			System.out.println(fur.getName(i) + " is bought and placed in " + name);
-			spaceUsed--;
+			spaceUsed++;
 			return true;
 		}else {
 			System.out.println("No space to put furniture in " + name + ". Please choose another room");
@@ -192,30 +196,48 @@ public class Room {
 	// call by Home
 	public boolean buyFood(Food f, int i) {
 		// choose which furniture to place food
-		System.out.println("\nChoose which furniture to place " + f.getNumberedName(i) + ":");
-		System.out.println("Existing Furniture for storage: ");
-		System.out.println(getIntToFurnitureMapString());
-		int furnitureOption = h.inputInt("Enter an int:", 1, furnitureList.size());
-		Furniture furnitureChosen = intToFurnitureMap.get(furnitureOption);
-		boolean success = furnitureChosen.buyFood(f, i);
-		if (success) {
+		boolean success = false;
+		int storageAllFur = getStorageSpaceFromAllFur();
+		if(storageAllFur > 0) {
+			System.out.println("\nChoose which furniture to place " + f.getNumberedName(i) + ":");
+			System.out.println("Existing Furniture available for storage: ");
+			System.out.println(getIntToFurnitureMapString());
+			int furnitureOption = h.inputInt("Enter an int:", 1, furnitureList.size());
+			Furniture furnitureChosen = intToFurnitureMap.get(furnitureOption);
+			success = furnitureChosen.buyFood(f, i);
 			System.out.println(" in " + name + ".");
+		}else {
+			System.out.println("No furniture in this room has space available for storage. Choose another room.");
+			success = false;
 		}
 		return success;
 	}
 
 	public boolean buyToy(Toy t, int i) {
 		// choose which furniture to place food
-		System.out.println("\nChoose which furniture to place " + t.getNumberedName(i) + ":");
-		System.out.println("Existing Furniture for storage: ");
-		System.out.println(getIntToFurnitureMapString());
-		int furnitureOption = h.inputInt("Enter an int:", 1, furnitureList.size());
-		Furniture furnitureChosen = intToFurnitureMap.get(furnitureOption);
-		boolean success = furnitureChosen.buyToy(t, i);
-		if (success) {
+		boolean success = false;
+		int storageAllFur = getStorageSpaceFromAllFur();
+		if(storageAllFur > 0) {
+			System.out.println("\nChoose which furniture to place " + t.getNumberedName(i) + ":");
+			System.out.println("Existing Furniture available for storage: ");
+			System.out.println(getIntToFurnitureMapString());
+			int furnitureOption = h.inputInt("Enter an int:", 1, furnitureList.size());
+			Furniture furnitureChosen = intToFurnitureMap.get(furnitureOption);
+			success = furnitureChosen.buyToy(t, i);
 			System.out.println(" in " + name + ".");
+		}else {
+			System.out.println("No furniture in this room has space available for storage. Choose another room.");
+			success = false;
 		}
 		return success;
+	}
+
+	private int getStorageSpaceFromAllFur() {
+		int i = 0;
+		for (Furniture f : furnitureList) {
+			i += f.getStoreSpace() - f.getSpaceUsed();
+		}
+		return i;
 	}
 
 	public int getSpaceUsed() {
@@ -228,6 +250,27 @@ public class Room {
 
 	public static int getMaxNumFur() {
 		return maxNumFur;
+	}
+
+	public String toFileString() {
+		String str = "";
+		str += name + "/" + cam.isOn() + "/" + cam.getInfoRecorded() + "/" + 
+		comfortLevel + "/" + "/" + door.isOpen() + "/" + door.isLocked() + "/" + door.getMaterial().name();
+		for (Furniture f : furnitureList){
+			if (furnitureNumMap.get(f.getName()) != 0) {
+				str += "/" + f.toFileString();
+			}
+		}
+		
+		return str;
+	}
+
+	public Integer availableSpace() {
+		int i = 0;
+		for (Furniture f : furnitureList) {
+			i += f.getStoreSpace() - f.getSpaceUsed();
+		}
+		return (Integer) i;
 	}
 	
 	

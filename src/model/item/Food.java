@@ -127,14 +127,42 @@ public enum Food {
 
 
 	public static void printConsumeMenuOptions() {
-		// TODO Auto-generated method stub
+		String prompt = getConsumeMenuOptions();
+		System.out.println(prompt);
 		
 	}
 
 
 
+	public static String getConsumeMenuOptions() {
+		String prompt = "*****\t Docorators Toys In Storage Menu\t*****";
+
+		for (Food f : Food.values()) { // array from the enum
+			if (f.num > 0) {
+				prompt += "\n" + (f.ordinal() + 1) + ": " + f.getDisplayStringWithNum();
+			}
+		}
+		prompt += "\n**********************************************\n";
+		return prompt;
+	}
+
+
+
 	public static int getAvailableOptionNum() {
-		// TODO Auto-generated method stub
-		return 0;
+		int i = 0;
+		for (Food f : Food.values()) {
+			if (f.num > 0) {
+				i++;
+			}
+		}
+		return i;
+	}
+
+
+
+	public String toFileString() {
+		String str = "";
+		str += this.name();
+		return str;
 	}
 }

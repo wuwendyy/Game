@@ -18,46 +18,49 @@ public class Shop {
 
 	private static List<Furniture> makeFurnitureList() {
 		List<Furniture> furnitureList = new ArrayList<>();
-		Furniture woodChair = new Furniture("wood chair", 3, Material.WOOD, true, 3, 0, false, null, null, null);
+		// overload constructor
+		Furniture woodChair = new Furniture("wood chair", 3, Material.WOOD, true, 3, 0, false);
 		furnitureList.add(woodChair);
-		Furniture plasticChair = new Furniture("plastic chair", 2, Material.PLASTIC, true, 3, 0, false, null, null, null);
+		Furniture plasticChair = new Furniture("plastic chair", 2, Material.PLASTIC, true, 3, 0, false);
 		furnitureList.add(plasticChair);
-		Furniture bed = new Furniture("bed", 15, Material.WOOD, true, 10, 0, false, null, null, null);
+		Furniture bed = new Furniture("bed", 15, Material.WOOD, true, 10, 0, false);
 		furnitureList.add(bed);
-		Furniture dogBed = new Furniture("dog bed", 2, Material.FABRIC, true, 4, 0, false, null, null, null);
+		Furniture dogBed = new Furniture("dog bed", 2, Material.FABRIC, true, 4, 0, false);
 		furnitureList.add(dogBed);
-		Furniture procelainDogBowl = new Furniture("procelain dog bowl", 1, Material.PROCELAIN, true, 2, 0, false, null, null, null);
+		Furniture procelainDogBowl = new Furniture("procelain dog bowl", 1, Material.PROCELAIN, true, 2, 0, false);
 		furnitureList.add(procelainDogBowl);
-		Furniture metalDogBowl = new Furniture("metal dog bowl", 2, Material.METAL, true, 2, 0, false, null, null, null);
+		Furniture metalDogBowl = new Furniture("metal dog bowl", 2, Material.METAL, true, 2, 0, false);
 		furnitureList.add(metalDogBowl);
-		Furniture table = new Furniture("wood table",7, Material.WOOD, true, 6, 0, false, null, null, null);
+		Furniture table = new Furniture("wood table",7, Material.WOOD, true, 6, 0, false);
 		furnitureList.add(table);
-		Furniture bureau = new Furniture("bureau", 12, Material.PLASTIC, false, 20, 0, false, null, null, null);
+		Furniture bureau = new Furniture("bureau", 12, Material.PLASTIC, false, 20, 0, false);
 		furnitureList.add(bureau);
-		Furniture woodSofa = new Furniture("wood sofa", 5, Material.WOOD, true, 7, 0, false, null, null, null);
+		Furniture woodSofa = new Furniture("wood sofa", 5, Material.WOOD, true, 7, 0, false);
 		furnitureList.add(woodSofa);
-		Furniture fabricSofa = new Furniture("fabric sofa", 5, Material.FABRIC, true, 5, 0, false, null, null, null);
+		Furniture fabricSofa = new Furniture("fabric sofa", 5, Material.FABRIC, true, 5, 0, false);
 		furnitureList.add(fabricSofa);
-		Furniture procelainPottedPlant = new Furniture("plant in procelain pot", 2, Material.PROCELAIN, true, 1, 0, false, null, null, null);
+		Furniture procelainPottedPlant = new Furniture("plant in procelain pot", 2, Material.PROCELAIN, true, 1, 0, false);
 		furnitureList.add(procelainPottedPlant);
-		Furniture plasticPottedPlant = new Furniture("plant in plastic pot", 1, Material.PLASTIC, true, 1, 0, false, null, null, null);
+		Furniture plasticPottedPlant = new Furniture("plant in plastic pot", 1, Material.PLASTIC, true, 1, 0, false);
 		furnitureList.add(plasticPottedPlant);
-		Furniture armChair = new Furniture("arm chair", 5, Material.FABRIC, true, 4, 0, false, null, null, null);
+		Furniture armChair = new Furniture("arm chair", 5, Material.FABRIC, true, 4, 0, false);
 		furnitureList.add(armChair);
-		Furniture TV = new Furniture("TV", 15, Material.LCD, false, 0, 0, false, null, null, null);
+		Furniture TV = new Furniture("TV", 15, Material.LCD, false, 0, 0, false);
 		furnitureList.add(TV);
-		Furniture blanket = new Furniture("blanket", 1, Material.FABRIC, false, 0, 0, false, null, null, null);
+		Furniture blanket = new Furniture("blanket", 1, Material.FABRIC, false, 0, 0, false);
 		furnitureList.add(blanket);
-		Furniture cushion = new Furniture("cusion", 1, Material.FABRIC, false, 0, 0, false, null, null, null);
+		Furniture cushion = new Furniture("cusion", 1, Material.FABRIC, false, 0, 0, false);
 		furnitureList.add(cushion);
-		Furniture camera = new Furniture("camera", 15, Material.LCD, false, 0, 0, false, null, null, null);
+		Furniture camera = new Furniture("camera", 15, Material.LCD, false, 0, 0, false);
 		furnitureList.add(camera);
 		return furnitureList;
 	}
 	
+	
+
 	public static Furniture matchStrToFur(String s) {
 		Furniture f = nameToFurMap.get(s);
-		return f;
+		return new Furniture(f.getName(), f.getPrice(), f.getMaterial(), f.isOpen(), f.getStoreSpace(), f.getSpaceUsed(), f.isDamaged());
 	}
 	
 

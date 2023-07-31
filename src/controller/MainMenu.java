@@ -4,7 +4,7 @@ public enum MainMenu {
 	VIEW_GAME_INFO("Learn about Docorators"),
 	PLAY("Start Game"),
 	CLEAR_DATA("Clear current game data"),
-	QUIT("Quit Program");
+	QUIT("Save data and quit Program");
 
 	private String description;
 

@@ -93,5 +93,14 @@ public enum Tool {
 		}
 		return tool;
 	}
+
+
+
+
+	public String toFileString() {
+		String str = "";
+		str += this.name() + "\'" + this.num;
+		return str;
+	}
 	
 }

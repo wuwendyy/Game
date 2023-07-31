@@ -83,9 +83,9 @@ public class HomeReader {
 				if (f != null) {
 					furniture.add(f);
 					if (!furnitureMap.containsKey(f.getName())) {
-						furnitureMap.put(f.getName(), 1);
+						furnitureMap.put(f.getName(), (Integer)1);
 					}else {
-						furnitureMap.put(f.getName(),furnitureMap.get(f.getName())+1);
+						furnitureMap.put(f.getName(), (Integer)furnitureMap.get(f.getName())+1);
 					}
 				}else {
 					System.out.println("Error reading a furniture.");
@@ -116,11 +116,11 @@ public class HomeReader {
 			int spaceUsed = ls.nextInt();
 		    boolean isDamaged = ls.nextBoolean();
 		    String foodString = ls.next();
-		    List<Food> food = parseFoods(foodString);
+		    Map<Food, Integer> food = parseFoods(foodString);
 		    String toyString = ls.next();
-		    List<Toy> toy = parseToys(toyString);
+		    Map<Toy, Integer> toy = parseToys(toyString);
 		    String toolString = ls.next();
-		    List<Tool> tool = parseTools(toolString);
+		    Map<Tool, Integer> tool = parseTools(toolString);
 		    ls.close();
 			furniture = new Furniture(name, price, material,isOpen, storeSpace, spaceUsed, isDamaged, food, toy, tool);
 		} catch (InputMismatchException e) { // non-checked exception
@@ -135,8 +135,8 @@ public class HomeReader {
 		return furniture;
 	}
 	
-	private static List<Tool> parseTools(String toolString) {
-		List<Tool> tools = new ArrayList<>();
+	private static Map<Tool, Integer> parseTools(String toolString) {
+		Map<Tool, Integer> tools = new HashMap<>();
 		if (!toolString.equals("NULL")) {
 			if (toolString.contains("-")) {
 				try {
@@ -147,9 +147,9 @@ public class HomeReader {
 						single = ls.next();
 						Tool t = parseTool(single);
 						if (t != null) {
-							tools.add(t);
+							tools.put(t, (Integer)t.getNum()+1);
+							
 						}else {
-							System.out.println("error at multiple");
 							System.out.println("Error reading tools.");
 						}
 					}
@@ -164,7 +164,7 @@ public class HomeReader {
 			}else {
 				Tool t = parseTool(toolString);
 				if (t != null) {
-					tools.add(t);
+					tools.put(t, t.getNum());
 				}else {
 					System.out.println("error at single");
 					System.out.println("Error reading tools.");
@@ -192,8 +192,8 @@ public class HomeReader {
 		return tool;
 	}
 
-	private static List<Toy> parseToys(String toyString) {
-		List<Toy> toys = new ArrayList<>();
+	private static Map<Toy, Integer> parseToys(String toyString) {
+		Map<Toy, Integer> toys = new HashMap<>();
 		if (!toyString.equals("NULL")) {
 			if (toyString.contains("-")) {
 				try {
@@ -202,7 +202,7 @@ public class HomeReader {
 					while (ls.hasNext()){
 						Toy t = parseToy(ls.next());
 						if (t != null) {
-							toys.add(t);
+							toys.put(t, (Integer)t.getNum());
 						}else {
 							System.out.println("Error reading toys.");
 						}
@@ -218,7 +218,7 @@ public class HomeReader {
 			}else {
 				Toy t = parseToy(toyString);
 				if (t != null) {
-					toys.add(t);
+					toys.put(t, t.getNum());
 				}else {
 					System.out.println("Error reading toys.");
 				}
@@ -245,8 +245,8 @@ public class HomeReader {
 		return toy;
 	}
 
-	private static List<Food> parseFoods(String foodString) {
-		List<Food> foods = new ArrayList<>();
+	private static Map<Food, Integer> parseFoods(String foodString) {
+		Map<Food, Integer> foods = new HashMap<>();
 		if (!foodString.equals("NULL")) {
 			if (foodString.contains("-")) {
 				try {
@@ -255,7 +255,7 @@ public class HomeReader {
 					while (ls.hasNext()){
 						Food f = parseFood(ls.next());
 						if (f != null) {
-							foods.add(f);
+							foods.put(f, (Integer)f.getNum());
 						}else {
 							System.out.println("Error reading foods.");
 						}
@@ -271,7 +271,7 @@ public class HomeReader {
 			}else {
 				Food f = parseFood(foodString);
 				if (f != null) {
-					foods.add(f);
+					foods.put(f, f.getNum());
 				}else {
 					System.out.println("Error reading foods.");
 				}

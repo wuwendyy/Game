@@ -140,6 +140,15 @@ public enum Toy {
 		String prompt = getConsumeMenuOptions();
 		System.out.println(prompt);
 	}
+
+
+
+
+	public String toFileString() {
+		String str = "";
+		str += this.name() + "\'" + this.num;
+		return str;
+	}
 	
 
 }

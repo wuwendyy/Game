@@ -357,14 +357,19 @@ public class Game {
 	public void buyItem(Object obj, int i) {
 		boolean success = false;
 		int price = 0;
+		String name = "";
 		if (obj instanceof Furniture) {
+			name = ((Furniture)obj).getName(i);
 			success = canBuy(((Furniture) obj).getPrice());
 			if (success) {
 				price = ((Furniture) obj).getPrice();
 				// update all list, maps containing Furniture (Room, Home)
 				success = furnitureBought((Furniture) obj, i);
+			}else {
+				System.out.println("Transaction failed. You do not have enough money ($" + money + ".");
 			}
 		}else if (obj instanceof Food){
+			name = ((Food) obj).getNumberedName(i);
 			// match enum and update the variable num of that enum
 			// update classes that has this obj
 			success = canBuy(((Food) obj).getPrice());
@@ -373,12 +378,14 @@ public class Game {
 				success = FoodBought((Food)obj, i);
 			}
 		}else if (obj instanceof Toy) {
+			((Toy)obj).getNumberedName(i);
 			success = canBuy(((Toy) obj).getPrice());
 			if (success){
 				price = ((Toy) obj).getPrice();
 				success = FoodBought((Toy)obj, i);
 			}
 		}else if (obj instanceof Tool) {
+	
 			success = canBuy(((Tool) obj).getPrice());
 			price = ((Tool) obj).getPrice();
 		}
@@ -386,7 +393,7 @@ public class Game {
 			spendMoney(price);
 			System.out.println("Successful transaction. You have $" + money + " remaining.\n");
 		}else {
-			System.out.println("Transaction failed. You do not have enough money ($" + money + ".\n");
+			System.out.println("Transaction for " + name + " failed. You do not have enough space in home.");
 		}
 		
 	}
@@ -403,7 +410,7 @@ public class Game {
 
 	public void work(WorkMenu option, String startTime) {
 		work = new Work(option, startTime);
-		System.out.println("Leaves home and starts working at " + startTime + ".");
+		System.out.println("Leaves home and starts job " + option.name() + " at " + startTime + ".");
 	}
 
 
@@ -466,22 +473,40 @@ public class Game {
 	}
 
 
-	public char[] toFileString() {
-		// TODO Auto-generated method stub
-		return null;
+	public String toFileString() {
+		String str = "";
+		str += "money/workChosen/startTime\n";
+		str += money + "/";
+		if (work != null) {
+			str += work.getWorkChosen().name() + "/" + work.getStartTime();
+		}else {
+			str += "NULL";
+		}
+		return str;
 	}
 
 
-	public char[] getDogstoFileString() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getDogstoFileString() {
+		String str = "";
+		str += "name/age/currentEL/currentWL/mood/friendship/destructivePower/currentSize/breedName,initialDP,maxSize,Personality1-Personality2-Personality3\n";
+		int i = 1;
+		for (Dog d : dogs) {
+			if (i < dogs.size()) {
+				str += d.toFileStrings() + "\n";
+			}else {
+				str += d.toFileStrings();
+			}
+		}
+		return str;
 	}
 
 
 
-	public char[] getHometoFileString() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getHometoFileString() {
+		String str = "";
+		str += "RoomName/isOn/record/ComfortLevel/furName,price,material,isOpen,storeSpace,spaceUsed,isDamaged,food1*food2,toy1,tool1\n";
+		str += home.getHomeToFileString();
+		return str;
 	}
 
 

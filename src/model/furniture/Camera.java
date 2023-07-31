@@ -20,4 +20,26 @@ public class Camera {
 		System.out.println("Hello, World!");
 	
 	}
+
+
+	public boolean isOn() {
+		return isOn;
+	}
+
+
+	public void setOn(boolean isOn) {
+		this.isOn = isOn;
+	}
+
+
+	public String getInfoRecorded() {
+		return infoRecorded;
+	}
+
+
+	public void setInfoRecorded(String infoRecorded) {
+		this.infoRecorded = infoRecorded;
+	}
+	
+	
 }

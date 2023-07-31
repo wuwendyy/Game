@@ -14,16 +14,17 @@ public class Furniture implements Purchasable, Sellable, Movable{
 	private int storeSpace; // # items(food, toys) can be placed in/on this furniture
 	private int spaceUsed;
 	private boolean isDamaged;	
+	private Map<String, Integer> itemNameToNumMap;
 	
-	private List<Food> food; 
-	private List<Toy> toy; 
-	private List<Tool> tool; 
+	private Map<Food, Integer> foodToNumMap; 
+	private Map<Toy, Integer> toyToNumMap; 
+	private Map<Tool, Integer> toolToNumMap; 
 
 
 	 
 	// use map to keep track of numbers or restrict # furniture to one for now?
 	public Furniture(String name, int price, Material material, boolean isOpen, int storeSpace,
-			int spaceUsed, boolean isDamaged, List<Food> food, List<Toy> toy, List<Tool> tool) {
+			int spaceUsed, boolean isDamaged, Map<Food, Integer> foodToNumMap, Map<Toy, Integer> toyToNumMap, Map<Tool, Integer> toolToNumMap) {
 		super();
 		this.name = name;
 		this.price = price;
@@ -32,14 +33,31 @@ public class Furniture implements Purchasable, Sellable, Movable{
 		this.storeSpace = storeSpace;
 		this.spaceUsed = spaceUsed;
 		this.isDamaged = isDamaged;
-		this.food = food;
-		this.toy = toy;
-		this.tool = tool;
+		this.foodToNumMap = foodToNumMap;
+		this.toyToNumMap = toyToNumMap;
+		this.toolToNumMap = toolToNumMap;
+	}
+	
+
+	public Furniture(String name, int price, Material material, boolean isOpen, int storeSpace,
+			int spaceUsed, boolean isDamaged) {
+		super();
+		this.name = name;
+		this.price = price;
+		this.material = material;
+		this.isOpen = isOpen;
+		this.storeSpace = storeSpace;
+		this.spaceUsed = spaceUsed;
+		this.isDamaged = isDamaged;
+		this.foodToNumMap = new HashMap<>();
+		this.toyToNumMap = new HashMap<>();
+		this.toolToNumMap =  new HashMap<>();
+		this.itemNameToNumMap = new HashMap<>();
 	}
 	
 	public String getFurnitureShopString() {
 		String info = "";
-		info += name + " ($" + price + ", S" + storeSpace + ")";
+		info += name + " ($" + price + ", Storage Space: " + storeSpace + ")";
 		return info;
 	}
 	
@@ -58,53 +76,57 @@ public class Furniture implements Purchasable, Sellable, Movable{
 		String storage = "";
 		int count = 0;
 		storage += "\n\t\tFood:";
-		if (food != null) {
-			for (Food f : food) {
-				if (f.getNum() > 0) {
-					count++;
-					if (count < food.size()) {
-						storage += f.getDisplayStringWithNum() + ", ";
-					}else {
-						storage += f.getDisplayStringWithNum();
-					}
+		if (!foodToNumMap.isEmpty()) {
+			for (Food f : foodToNumMap.keySet()) {
+				count++;
+				if (count < foodToNumMap.size()) {
+					storage += f.getDescription() + " (" + foodToNumMap.get(f) + "), ";
+				}else {
+					storage += f.getDescription() + " (" + foodToNumMap.get(f) + ")";
 				}
+				
 			}
 		}
 		count = 0;
 		storage+="\n\t\tToy:";
-		if (toy != null) {
-			for (Toy t : toy) {
-				if (t.getNum() > 0) {
-					count++;
-					if (count < toy.size()) {
-						storage += t.getDisplayStringWithNum() + ", ";
-					}else {
-						storage += t.getDisplayStringWithNum();
-					}
+		if (!toyToNumMap.isEmpty()) {
+			for (Toy t : toyToNumMap.keySet()) {
+				count++;
+				if (count < toyToNumMap.size()) {
+					storage += t.getDescription() + " (" + toyToNumMap.get(t) + "), ";
+				}else {
+					storage += t.getDescription() + " (" + toyToNumMap.get(t) + ")";
 				}
+				
 			}
 		}
 		count = 0;
 		storage+= "\n\t\tTool:";
-		if (tool != null) {
-			for (Tool t : tool) {
-				if (t.getNum() > 0) {
-					count++;
-					if (count < tool.size()) {
-						storage += t.getDisplayStringWithNum() + ", ";
-					}else {
-						storage += t.getDisplayStringWithNum();
-					}
+		if (!toolToNumMap.isEmpty()) {
+			for (Tool s : toolToNumMap.keySet()) {
+				count++;
+				if (count < toolToNumMap.size()) {
+					storage += s.getDescription() + " (" + toolToNumMap.get(s) + "), ";
+				}else {
+					storage += s.getDescription() + " (" + toolToNumMap.get(s) + ")";
 				}
+				
 			}
 		}
 		return storage;
 	}
 	
+
+	
 	public boolean buyFood(Food f, int i) {
 		if (spaceUsed < storeSpace) {
-			food.add(f);
-			f.setNum(f.getNum()+1);
+			if (foodToNumMap.containsKey(f)) {
+					System.out.println( "key = " + f.name() + ", num = " + foodToNumMap.get(f));
+				foodToNumMap.put(f, (Integer)foodToNumMap.get(f)+1);
+			}else {
+				foodToNumMap.put(f, (Integer)1);
+			}
+			spaceUsed++;
 			System.out.print(f.getNumberedName(i) + " is bought and placed in a " + name);
 			return true;
 		}else {
@@ -115,11 +137,16 @@ public class Furniture implements Purchasable, Sellable, Movable{
 	
 	public boolean buyToy(Toy t, int i) {
 		if (spaceUsed < storeSpace) {
-			toy.add(t);
-			t.setNum(t.getNum()+1);
+			if (toyToNumMap.containsKey(t.name())) {
+				toyToNumMap.put(t, (Integer)toyToNumMap.get(t)+1);
+			}else {
+				toyToNumMap.put(t,(Integer)1);
+			}
+			spaceUsed++;
 			System.out.print(t.getNumberedName(i) + " is bought and placed in a " + name);
 			return true;
 		}else {
+			// choose other furniture
 			System.out.println(this.name + " is full. Please choose another furniture.\n");
 			return false;
 		}
@@ -212,47 +239,6 @@ public class Furniture implements Purchasable, Sellable, Movable{
 
 
 
-	public List<Food> getFood() {
-		return food;
-	}
-
-
-
-
-	public void setFood(List<Food> food) {
-		this.food = food;
-	}
-
-
-
-
-	public List<Toy> getToy() {
-		return toy;
-	}
-
-
-
-
-	public void setToy(List<Toy> toy) {
-		this.toy = toy;
-	}
-
-
-
-
-	public List<Tool> getTool() {
-		return tool;
-	}
-
-
-
-
-	public void setTool(List<Tool> tool) {
-		this.tool = tool;
-	}
-
-
-
 	public static void main(String[] args){
 	
 		System.out.println("Hello, World!");
@@ -264,7 +250,50 @@ public class Furniture implements Purchasable, Sellable, Movable{
 	}
 
 	public String getNameWithSpaceLeft() {
-		return name + " (" + (storeSpace - spaceUsed) + ")";
+		return name + " (Space Available: " + (storeSpace - spaceUsed) + ")";
+	}
+
+	public String toFileString() {
+		String str = "";
+		str += name + "," + price + "," + material.name() + "," + isOpen + "," + storeSpace + "," + spaceUsed
+				 + "," + isDamaged + ",";
+		int i = 1;
+		if (foodToNumMap.size() > 0) {
+			for (Food f : foodToNumMap.keySet()) {
+					if (i < foodToNumMap.size()) {
+						str += f.name() + "\'" + foodToNumMap.get(f)  + "-";
+					}else {
+						str += f.name() + "\'" + foodToNumMap.get(f) + ",";
+					}
+			}
+		}else if (foodToNumMap.size() == 0) {
+			str += "NULL" + ",";
+		}
+		i = 1;
+		if (toyToNumMap.size() > 0) {
+			for (Toy t : toyToNumMap.keySet()) {
+					if (i < toyToNumMap.size()) {
+						str += t.name() + "\'" + toyToNumMap.get(t)  + "-";
+					}else {
+						str += t.name() + "\'" + toyToNumMap.get(t) + ",";
+					}
+			}
+		}else if (toyToNumMap.size() == 0) {
+			str += "NULL" + ",";
+		}
+		i = 1;
+		if (toolToNumMap.size() > 0) {
+			for (Tool tl : toolToNumMap.keySet()) {
+					if (i < toolToNumMap.size()) {
+						str += tl.name() + "\'" + toolToNumMap.get(tl)  + "-";
+					}else {
+						str += tl.name() + "\'" + toolToNumMap.get(tl) + ",";
+					}
+			}
+		}else if (toolToNumMap.size() == 0) {
+			str += "NULL" + ",";
+		}
+		return str;
 	}
 
 

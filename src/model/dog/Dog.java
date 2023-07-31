@@ -324,6 +324,18 @@ public class Dog {
 
 
 
+	public String toFileStrings() {
+		String str = "";
+		str = name + "/" + age + "/" + currentEnergyLevel + "/"
+				+ currentWaterLevel + "/" + mood + "/" + friendship + "/"
+				+ destructivePower + "/" + currentSize.name() + "/"
+				+ breed.getName().name() + "/" + breed.getCharacteristicToFileString();
+		
+		return str;
+	}
+
+
+
 
 	
 	
