@@ -16,6 +16,7 @@ public class Room {
 	private int comfortLevel;
 	private Camera cam;
 	// to look up # same type of furniture in the room
+	// don't store furniture of # 0
 	private Map<String, Integer> furnitureNumMap;
 	private Map<Integer, Furniture> intToFurnitureMap;
 	private Helper h;

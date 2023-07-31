@@ -66,8 +66,12 @@ public enum Toy {
 		return this.description;
 	}
 	
+	public String getDisplayStringWithInfo() {
+		return this.description + "( $" + price + ")";
+	}
+	
 	public String getDisplayStringWithNum() {
-		return this.description + "(" + num + ")";
+		return this.description + "(#" + num + " in storage)";
 	}
 
 	public static int getOptionNum() {
@@ -79,10 +83,10 @@ public enum Toy {
 	}
 
 	public static String getMenuOptions() {
-		String prompt = "*****\t Docorators Main Menu\t*****";
+		String prompt = "*****\t Docorators Toys Shopping Menu\t*****";
 
 		for (Toy m : Toy.values()) { // array from the enum
-			prompt += "\n" + (m.ordinal() + 1) + ": " + m.getDisplayString();
+			prompt += "\n" + (m.ordinal() + 1) + ": " + m.getDisplayStringWithInfo();
 		}
 		prompt += "\n**********************************************\n";
 		return prompt;
@@ -101,12 +105,41 @@ public enum Toy {
 		}
 		return toy;
 	}
-
-
-
+	
+	public static int getAvailableOptionNum() {
+		int i = 0;
+		for (Toy t : Toy.values()) {
+			if (t.num > 0) {
+				i++;
+			}
+		}
+		return i;
+	}
+	
 
 	public String getNumberedName(int i) {
 		return getDescription() + " #" + i;
 	}
+
+
+
+	// later solve not printing items with 0 storage
+	public static String getConsumeMenuOptions() {
+		String prompt = "*****\t Docorators Toys In Storage Menu\t*****";
+
+		for (Toy t : Toy.values()) { // array from the enum
+			if (t.num > 0) {
+				prompt += "\n" + (t.ordinal() + 1) + ": " + t.getDisplayStringWithNum();
+			}
+		}
+		prompt += "\n**********************************************\n";
+		return prompt;
+	}
+	
+	public static void printConsumeMenuOptions() {
+		String prompt = getConsumeMenuOptions();
+		System.out.println(prompt);
+	}
+	
 
 }

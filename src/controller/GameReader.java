@@ -32,9 +32,13 @@ public class GameReader {
 					Scanner ls = new Scanner(line);
 					ls.useDelimiter("/");
 					money = ls.nextInt();
-					boolean isWorking = ls.nextBoolean();
 					WorkMenu workChosen = WorkMenu.valueOf(ls.next());
-					work = new Work(isWorking, workChosen);
+					if (workChosen == WorkMenu.NULL) {
+						work = null;
+					}else {
+						String startTime = ls.next();
+						work = new Work(workChosen,startTime);
+					}
 				}
 				game = new Game(dogs, home, money, work);
 			}

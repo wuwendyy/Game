@@ -81,7 +81,7 @@ public enum Food {
 	}
 	
 	public String getDisplayStringWithInfo() {
-		return this.description + "($" + price + "， E" + energy + ", W" + waterReplenishment + ")";
+		return this.description + "( $" + price + "， E" + energy + ", W" + waterReplenishment + ")";
 	}
 
 
@@ -122,5 +122,19 @@ public enum Food {
 
 	public String getNumberedName(int i) {
 		return getDescription() + " #" + i ;
+	}
+
+
+
+	public static void printConsumeMenuOptions() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public static int getAvailableOptionNum() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

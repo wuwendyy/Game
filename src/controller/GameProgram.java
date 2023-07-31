@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.*;
+import java.text.*;
 
 import java.time.*;
 import java.util.*;
@@ -25,9 +26,10 @@ import view.UI;
 import view.UIConsole;
 
 public class GameProgram{ 
+	// keep track of time & energy change due to time ? regular reward from dog?
 	
 	// inform time of day & dog age as system time goes
-	// let certain function terminate after a fixed duration (walk dog)
+	
 	
 	private Game game;
 	private UI ui;
@@ -60,6 +62,7 @@ public class GameProgram{
 		
 	}
 	
+	
 	private void getMainMenuOption() {
 		// TODO Auto-generated method stub
 		boolean quit = false;
@@ -77,6 +80,12 @@ public class GameProgram{
 				System.out.println("--- Loading Game Menu ---");
 				getGameMenuOption();
 				break;
+			case CLEAR_DATA:
+				boolean check = h.inputBoolean("Are you sure to clear existing game data? It can't be undo.");
+				if (check) {
+					clearData();
+					System.out.println("All data have been deleted.");
+				}
 			case QUIT:
 				quit = true;
 				System.out.println("Goodbye! Your data will be saved.");
@@ -87,27 +96,44 @@ public class GameProgram{
 	}
 
 	
+	private void clearData() {
+		resetFile("game");
+		resetFile("dog");
+		resetFile("home");
+	}
+
+
+	private void resetFile(String fileName) {
+		try (FileOutputStream fos = new FileOutputStream(fileName); PrintWriter out = new PrintWriter(fos)) {
+			out.println("NULL");
+			System.out.println("Saved home to: " + fileName);
+			// catch Exception 1
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found, problem saving data... " + fileName);
+			// catch Exception 2
+		} catch (IOException e) {
+			System.err.println("Some other IO Problem happened while saving data... " + e);
+		} // ��files are closed automatically during try-with-resource
+	}
+
+
 	private void getGameMenuOption() {
 		boolean quit = false;
 		while (!quit) {
 			System.out.println("\nYou are at Game Menu");
-			GameMenu.printMenuOptions();
-			int choice = h.inputInt("Choose an option by number", 1, GameMenu.getOptionNum());
-			GameMenu option = GameMenu.getOption(choice);
+			GameMenu option = null;
+			if (game.getDogs().size() != 0){ // basically force player to have dog whenever in game
+				GameMenu.printMenuOptions();
+				int choice = h.inputInt("Choose an option by number", 1, GameMenu.getOptionNum()-1) +1;
+				option = GameMenu.getOption(choice); // should not include initilization
+			}else {
+				option = GameMenu.INITIALIZAZTION;
+			}
+			String currentTime = "";
 			switch (option) {
 			case INITIALIZAZTION:
-				System.out.println("Choose the doggie to live with!(home is defualt with basic furniture)");
-				// choose dog (custom breed, name)
-				System.out.println("\nAvailable breeds are:");
-				BreedName.printMenuOptions();
-				int c = h.inputInt("Choose an option by number", 1, BreedName.getOptionNum());
-				BreedName breedName = BreedName.getOption(c);
-				Breed breed = new Breed(breedName);
-				String name = h.inputWord("Give your dog a name:");
-				Dog d = new Dog(name, breed);
-				Set<Dog> dogs = new HashSet<>();
-				dogs.add(d);
-				game.setDogs(dogs);
+				System.out.println("As there's no dog in your home, choose a pet dog!(home is defualt with basic furniture)");
+				game.addSingleDog();
 				break;
 			case VIEW_HOME_INFO:
 				//show existing rooms & furniture, but not the actual state
@@ -121,19 +147,38 @@ public class GameProgram{
 				// name, age, size, characteristics
 				game.showGeneralDogInfo();
 				break;
+			case ADD_DOGS:
+				System.out.println("Not implemented yet");
+				// meet standards to call game.addMultipleDogs(int)
+				break;
 			case SHOP:
 				getShopMenu();
 				break;
 			case VIEW_WORK_STATE:
-				game.showWorkState();
+				currentTime = getCurrentTimeString();
+				game.getWorkState(currentTime);
 				break;
 			case ENTER_HOME:
 				// calculate time elapse while not in home (only leave due to work is valid)
 				// dog.damage(time); update condition of furniture
-				int timeOutside = 0; // round up
-				game.probabalisticDamageHappen(timeOutside);
-				
-				getInHomeMenu();
+				currentTime = getCurrentTimeString();
+				long timeOutSide = 0; 
+				timeOutSide = game.getTimeOutside(currentTime);
+				if (!game.getWorkState(currentTime)) { // if have finished work/did't leave home for work before
+					System.out.println("As you don't have work in process, you can enter home without loss.");
+					game.probabalisticDamageHappen(timeOutSide);
+					getInHomeMenu();
+				}else { // work not finished
+					boolean doEnterHome = false;
+					doEnterHome = h.inputYesNo("You have unfinished work, if you leave work for home now you will not get salary."
+							+ "\nAre you sure you want to come home? (y/n)");
+					if (doEnterHome){
+						// no salary and work is abandoned
+						game.setWork(null);;
+						game.probabalisticDamageHappen(timeOutSide);
+						getInHomeMenu();
+					}
+				}
 				break;
 			case QUIT:
 				quit = true;
@@ -171,8 +216,7 @@ public class GameProgram{
 				// clean up the mess
 				break;
 			case BUY_ROOM:
-				Set<String> existRoomNames = game.getExistRoomNames();
-				String roomName = h.inputNonRepeatedWord("Enter a name for the room", existRoomNames);
+				game.buyRoom();
 				break;
 			case FIX_DOOR:
 				System.out.println("Not implemented yet");
@@ -199,7 +243,7 @@ public class GameProgram{
 				Tool option = Tool.getOption(choice);
 				int num = h.inputInt("How many " + option.getDescription() + " do you want? (1~10)", 1, 10);
 				for (int i = 0; i < num; i++) {
-					buyItem(option, i+1);
+					game.buyItem(option, i+1);
 				}
 			}
 			quit = !h.inputYesNo("Do you want to continue buying cleaning tools? (y/n)");
@@ -217,7 +261,7 @@ public class GameProgram{
 				Toy option = Toy.getOption(choice);
 				int num = h.inputInt("How many " + option.getDescription() + " do you want? (1~10)", 1, 10);
 				for (int i = 0; i < num; i++) {
-					buyItem(option, i+1);
+					game.buyItem(option, i+1);
 				}
 			}
 			quit = !h.inputYesNo("Do you want to continue buying dog toys (y/n)");
@@ -236,7 +280,7 @@ public class GameProgram{
 				Food option = Food.getOption(choice);
 				int num = h.inputInt("How many " + option.getDescription() + " do you want? (1~10)", 1, 10);
 				for (int i = 0; i < num; i++) {
-					buyItem(option, i+1);
+					game.buyItem(option, i+1);
 				}
 			}
 			quit = !h.inputYesNo("Do you want to continue buying dog food? (y/n)");
@@ -257,54 +301,10 @@ public class GameProgram{
 				Furniture f = Shop.matchStrToFur(name);
 				int num = h.inputInt("How many " + f.getName() + " do you want? (1~10)", 1, 10);
 				for (int i = 0; i < num; i++) {
-					buyItem(f, i+1);
+					game.buyItem(f, i+1);
 				}
 			}
 			quit = !h.inputYesNo("Do you want to continue buying furniture? (y/n)");
-		}
-	}
-	
-	public void buyItem(Object obj, int i) {
-		boolean success = false;
-		int price = 0;
-		if (obj instanceof Furniture) {
-			success = canBuy(((Furniture) obj).getPrice());
-			if (success) {
-				price = ((Furniture) obj).getPrice();
-				// update all list, maps containing Furniture (Room, Home)
-				success = game.furnitureBought((Furniture) obj, i);
-			}
-		}else if (obj instanceof Food){
-			// match enum and update the variable num of that enum
-			// update classes that has this obj
-			success = canBuy(((Food) obj).getPrice());
-			if (success) {
-				price = ((Food) obj).getPrice();
-				success = game.FoodBought((Food)obj, i);
-			}
-		}else if (obj instanceof Toy) {
-			success = canBuy(((Toy) obj).getPrice());
-			if (success){
-				price = ((Toy) obj).getPrice();
-				success = game.FoodBought((Toy)obj, i);
-			}
-		}else if (obj instanceof Tool) {
-			success = canBuy(((Tool) obj).getPrice());
-			price = ((Tool) obj).getPrice();
-		}
-		if (success) {
-			game.spendMoney(price);
-			System.out.println("Successful transaction. You have $" + game.getMoney() + " remaining.\n");
-		}else {
-			System.out.println("Transaction failed. You do not have enough money ($" + game.getMoney() + ".\n");
-		}
-	}
-	
-	private boolean canBuy(int price) {
-		if (game.getMoney() - price >= 0) {
-			return true;
-		}else {
-			return false;
 		}
 	}
 	
@@ -320,29 +320,55 @@ public class GameProgram{
 			// consume items
 			case VIEW_STATE:
 				// dogs' current state
+				game.showCurrentDogInfo();
 				break;
 			case FEED:
 				// choose food from food list
-				
-				// consume = dog state change by the amount of food
-				
-				// delete food from food list
+				List<Food> foodList = new ArrayList<>();
+				foodList = getUseFoodMenu();
+				if (foodList != null) {
+					game.feedDog(foodList);
+				}else {
+					System.out.println("You haven't chosen any food.");
+				}
 				break;
 			case PLAY:
+				// reasonable to play one toy at a time
+				Toy toy = null;
 				// choose toy from toy list
-				
-				// consume = dog state change by the amount of toy
-				
-				// wear toy 
+				toy = getUseToyMenu();	
+				if (toy != null) {
+					game.playWithDog(toy);
+				}else {
+					System.out.println("You haven't chosen any toys.");
+				}
 				break;
 			case WALK_DOG:
 				// fixed a duration of a fixed screen
 				// record start time point
 				// increase dog state when finished
+				System.out.println("You will walk dog for 1 minutes."); // test
+				game.walkDog();
+				String startTime = getCurrentTimeString();
+				boolean finished = false;
+				while (!finished) { // fixed at the current screen
+					String currentTime = getCurrentTimeString();
+					long diffInMinutes = findMinDifference(startTime, currentTime);
+					if (diffInMinutes >= 1) {
+						finished = true;
+					}
+				}
+				System.out.println("Finished walking dog.");
 				break;
 			case WORK:
-				getWorkMenu();
-				// modify variable work, record start time
+				// must have dogs to work, or player can continuously working without any potential loss
+				if (game.getDogs() != null) {
+					getWorkMenu();
+					quit = true; // force leave home due to work
+					// modify variable work, record start time
+				}else {
+					System.out.println("You can only work when you have a dog");
+				}
 				break;
 			case QUIT:
 				quit = true;
@@ -354,24 +380,88 @@ public class GameProgram{
 	}
 
 
+	private Toy getUseToyMenu() {
+		Toy toy = null;
+		boolean quit = false;
+		while (!quit) {
+			System.out.println("\nYou are at Dog Toy In Storage Menu");
+			Toy.printConsumeMenuOptions();
+			int choice = h.inputInt("Choose an option by number (0 to quit)", 0, Toy.getAvailableOptionNum());
+			if (choice != 0) {
+				toy = Toy.getOption(choice);
+			}
+			quit = !h.inputYesNo("Do you want to change the dog toy chosen? (y/n)");
+		}
+		return toy;
+	}
+
+
+	private List<Food> getUseFoodMenu() {
+		List<Food> foodList = new ArrayList<>();
+		boolean quit = false;
+		while (!quit) {
+			System.out.println("\nYou are at Dog Food In Storage Menu");
+			Food.printConsumeMenuOptions();
+			int choice = h.inputInt("Choose an option by number (0 to quit)", 0, Food.getAvailableOptionNum());
+			if (choice != 0) {
+				Food f = Food.getOption(choice);
+				foodList.add(f);
+			}
+			quit = !h.inputYesNo("Do you want to add more food? (y/n)");
+		}
+		return foodList;
+	}
+
+	// from https://www.geeksforgeeks.org/find-the-duration-of-difference-between-two-dates-in-java/
+	private long findMinDifference(String startTime, String currentTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		long difference_In_Time = 0;
+		long difference_In_Minutes = 0;
+	    // Try Block
+	    try {
+	
+	        // parse method is used to parse
+	        // the text from a string to
+	        // produce the date
+	        Date d1 = sdf.parse(startTime);
+	        Date d2 = sdf.parse(currentTime);
+	
+	        // Calculate time difference
+	        // in milliseconds
+	        difference_In_Time
+	            = d2.getTime() - d1.getTime();
+	
+	        difference_In_Minutes
+	            = (difference_In_Time
+	               / (1000 * 60))
+	              % 60;
+	    }  // Catch the Exception
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+		return difference_In_Minutes;
+	}
+
+
 	private void getWorkMenu() {
 		System.out.println("\nYou are at Work Menu");
 		WorkMenu.printMenuOptions();
+		// can't choose null
 		int choice = h.inputInt("Choose an option by number", 1, InHomeMenu.getOptionNum()-1);
 		WorkMenu option = WorkMenu.getOption(choice);
-		switch (option) {
-		// record start time & update work
-		case A:
-			//
-			
-			break;
-		case B:
-			
-			break;
-		case C:
-			
-			break;
+		if (option != WorkMenu.NULL) {
+			String startTime = getCurrentTimeString();
+			game.work(option, startTime);
 		}
+	}
+
+
+	private String getCurrentTimeString() {
+		String currentTime = "";
+		Date date = new Date();  
+	    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");  
+	    currentTime = formatter.format(date); 
+		return currentTime;
 	}
 
 
@@ -419,7 +509,7 @@ public class GameProgram{
 	// for information specific to dog
 	public void saveDogData(String dogFile, Set<Dog> dog) {
 		try (FileOutputStream fos = new FileOutputStream(dogFile); PrintWriter out = new PrintWriter(fos)) {
-			out.println(game.toFileString());
+			out.println(game.getDogstoFileString());
 			System.out.println("Saved dog(s) to: " + dogFile);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {
@@ -435,7 +525,7 @@ public class GameProgram{
 	public void saveHomeData(String homeFile, Home home) {
 		// TODO Auto-generated method stub
 		try (FileOutputStream fos = new FileOutputStream(homeFile); PrintWriter out = new PrintWriter(fos)) {
-			out.println(game.toFileString());
+			out.println(game.getHometoFileString());
 			System.out.println("Saved home to: " + homeFile);
 			// catch Exception 1
 		} catch (FileNotFoundException e) {
@@ -446,6 +536,9 @@ public class GameProgram{
 		} // ��files are closed automatically during try-with-resource
 		
 	}
+	
+	
+	
 	
 	public static void main(String[] args) {
 		GameProgram gp = new GameProgram();

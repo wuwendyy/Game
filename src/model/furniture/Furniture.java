@@ -53,17 +53,20 @@ public class Furniture implements Purchasable, Sellable, Movable{
 		return info;
 	}
 	
+	// don't print items with #0
 	public String getStorageString() {
 		String storage = "";
 		int count = 0;
 		storage += "\n\t\tFood:";
 		if (food != null) {
 			for (Food f : food) {
-				count++;
-				if (count < food.size()) {
-					storage += f.getDisplayStringWithNum() + ", ";
-				}else {
-					storage += f.getDisplayStringWithNum();
+				if (f.getNum() > 0) {
+					count++;
+					if (count < food.size()) {
+						storage += f.getDisplayStringWithNum() + ", ";
+					}else {
+						storage += f.getDisplayStringWithNum();
+					}
 				}
 			}
 		}
@@ -71,11 +74,13 @@ public class Furniture implements Purchasable, Sellable, Movable{
 		storage+="\n\t\tToy:";
 		if (toy != null) {
 			for (Toy t : toy) {
-				count++;
-				if (count < toy.size()) {
-					storage += t.getDisplayStringWithNum() + ", ";
-				}else {
-					storage += t.getDisplayStringWithNum();
+				if (t.getNum() > 0) {
+					count++;
+					if (count < toy.size()) {
+						storage += t.getDisplayStringWithNum() + ", ";
+					}else {
+						storage += t.getDisplayStringWithNum();
+					}
 				}
 			}
 		}
@@ -83,11 +88,13 @@ public class Furniture implements Purchasable, Sellable, Movable{
 		storage+= "\n\t\tTool:";
 		if (tool != null) {
 			for (Tool t : tool) {
-				count++;
-				if (count < tool.size()) {
-					storage += t.getDisplayStringWithNum() + ", ";
-				}else {
-					storage += t.getDisplayStringWithNum();
+				if (t.getNum() > 0) {
+					count++;
+					if (count < tool.size()) {
+						storage += t.getDisplayStringWithNum() + ", ";
+					}else {
+						storage += t.getDisplayStringWithNum();
+					}
 				}
 			}
 		}

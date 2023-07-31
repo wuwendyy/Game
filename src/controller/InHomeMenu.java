@@ -2,7 +2,7 @@ package controller;
 
 public enum InHomeMenu {
 	VIEW_STATE("View dog(s)'current states"),
-	FEED("Give food or water"),
+	FEED("Feed food or water"),
 	PLAY("Play with dog"),
 	WALK_DOG("Walk dog"), 
 	// don't leave this menu, just fixed at the state of dog walking, 

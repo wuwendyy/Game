@@ -4,6 +4,7 @@ public enum GameMenu {
 	INITIALIZAZTION("1st time playing"), //choose dog, buy basic furniture and automatically enter home
 	VIEW_HOME_INFO("View home information"),// only show info at the time left last time. Enter home to view newest info
 	VIEW_DOG_INFO("View dog information"), 
+	ADD_DOGS("Get more dogs"),
 	SHOP("Buy furniture, food, toy, and tool"),
 	VIEW_WORK_STATE("View work state"), 
 	ENTER_HOME("Enter home"),
@@ -28,7 +29,9 @@ public enum GameMenu {
 		String prompt = "*****\t Docorators Game Menu\t*****";
 
 		for (GameMenu m : GameMenu.values()) { // array from the enum
-			prompt += "\n" + (m.ordinal() + 1) + ": " + m.getDisplayString();
+			if (m != GameMenu.INITIALIZAZTION) {
+				prompt += "\n" + (m.ordinal() ) + ": " + m.getDisplayString();
+			}
 		}
 		prompt += "\n**********************************************\n";
 		return prompt;

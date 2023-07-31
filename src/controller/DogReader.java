@@ -24,12 +24,11 @@ public class DogReader {
 			while (sc.hasNextLine()) { // for files,keep going while there are still lines in the file
 				String line = sc.nextLine();
 				line = sc.nextLine(); // skip category line
-				// parse this line into the Person object
 				Dog d = parseDog(line);
 				if (d != null) {
-					dogSet.add(d); // add to people arraylist
+					dogSet.add(d); 
 				} else {
-					System.out.println("Ignoring line of bad data: " + line);
+					//System.out.println("Ignoring line of bad data: " + line);
 				}
 			}
 			// handle exception
@@ -56,17 +55,21 @@ public class DogReader {
 			Scanner ls = new Scanner(line);
 			ls.useDelimiter("/");
 			String name = ls.next();
-			int age = ls.nextInt();
-			int currentEL = ls.nextInt();
-			int currentWL = ls.nextInt();
-			int mood = ls.nextInt();
-			int friendship = ls.nextInt();
-			//size enum string
-			currentSize = Size.valueOf(ls.next());
-			// breed
-			String breedString = ls.next();
-			breed = parseBreed(breedString);
-			dog = new Dog(name, age, breed, currentEL, currentWL, currentSize, mood, friendship);
+			if (!name.equals("NULL")) {
+				int age = ls.nextInt();
+				int currentEL = ls.nextInt();
+				int currentWL = ls.nextInt();
+				int mood = ls.nextInt();
+				int friendship = ls.nextInt();
+				//size enum string
+				currentSize = Size.valueOf(ls.next());
+				// breed
+				String breedString = ls.next();
+				breed = parseBreed(breedString);
+				dog = new Dog(name, age, breed, currentEL, currentWL, currentSize, mood, friendship);
+			}else {
+				dog = null;
+			}
 		} catch (InputMismatchException e) { // non-checked exception
 			System.err.println("error happened while reading line: " + line);
 			e.printStackTrace(); // show the other details

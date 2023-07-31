@@ -1,27 +1,28 @@
 package model.game;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Work {
-	private boolean isWorking; // working or not working
 	private WorkMenu workChosen;
-	private double timePointLeft; 
+	private String startTime;
 	
 	
-	public Work(boolean workState, WorkMenu workChosen) {
+	public Work(WorkMenu workChosen, String startTime) {
 		super();
-		this.isWorking = workState;
 		this.workChosen = workChosen;
-		this.timePointLeft = 0; // modified by time management system
+		this.startTime = startTime;
+	}
+	
+	
+
+
+	public String getStartTime() {
+		return startTime;
 	}
 
 
-	public boolean isWorking() {
-		return isWorking;
-	}
-
-
-	public void setWorking(boolean isWorking) {
-		this.isWorking = isWorking;
-	}
 
 
 	public WorkMenu getWorkChosen() {
@@ -33,27 +34,20 @@ public class Work {
 		this.workChosen = workChosen;
 	}
 
-
-	public double getTimeLeft() {
-		return timePointLeft;
-	}
-
-
-	public void setTimeLeft(double timeLeft) {
-		this.timePointLeft = timeLeft;
-	}
 	
-	
-	
-	public String getWorkStateString(double timePointCalled) {
-		String state = "";
-		if (isWorking) {
-			state = "Work in process:" + workChosen.getDisplayString();
-			state += "\nTime remaining: " + (timePointCalled - timePointLeft) + " unit.";
+	public boolean getWorkState(long timeOutSide) {
+		boolean finished = false;
+		if (timeOutSide >= workChosen.getDuration()) { // finished
+			finished = true;
+			System.out.println("Work finished. Salary is $" + workChosen.getSalary() + ".");
 		}else {
-			state = "Not working";
+			System.out.println("Work in process:" + workChosen.getDisplayString()
+			+ "\nTime remaining: " + (workChosen.getDuration() - timeOutSide) + " minutes.");
 		}
-		return state;
+		return finished;
 	}
+
+	
+
 	
 }

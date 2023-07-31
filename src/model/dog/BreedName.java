@@ -36,7 +36,7 @@ public enum BreedName {
 	}
 
 	public static String getMenuOptions() {
-		String prompt = "*****\t Docorators Main Menu\t*****";
+		String prompt = "*****\t Docorators Breed Menu\t*****";
 
 		for (BreedName m : BreedName.values()) { // array from the enum
 			prompt += "\n" + (m.ordinal() + 1) + ": " + m.getDisplayString();

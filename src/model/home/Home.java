@@ -2,6 +2,7 @@ package model.home;
 
 import java.util.*;
 
+import model.dog.Dog;
 import model.furniture.Camera;
 import model.furniture.Door;
 import model.furniture.Furniture;
@@ -18,6 +19,7 @@ public class Home {
 	// to look up furnitures in a room
 	private Map<Room, List<Furniture>> roomToFurMap;
 	private Helper h;
+	private static int maxRoomNum = 10;
 
 	
 	public Set<Room> getRooms() {
@@ -171,11 +173,12 @@ public class Home {
 
 
 	private int calculateComfortLevel(Set<Room> roomList) {
+		// to be modified
 		int i = 0;
 		for (Room r : roomList) {
 			i += r.getComfortLevel();
 		}
-		return 0;
+		return i;
 	}
 
 	
@@ -239,6 +242,49 @@ public class Home {
 	public int maxNumFurPerRoom() {
 		return Room.getMaxNumFur();
 	}
+
+
+	public void damage(Dog d, long timeOutside, boolean obstacle, boolean helper) {
+		// get percent to damage from dog destructive power (further modified by obstacle/helper)
+		
+		// get the random chance to damage or not (affected by dog characteristics, has obstacle/helper)
+		
+		// randomly choose the fixed percent of furniture to damage
+		
+		// wood door inside home can be damaged 
+		
+		
+		// with location setting, the damage is restricted to the area the dog in (certain rooms)
+		
+		// if some dogs damage door/ open door, no location restriction
+		
+		// if door is locked, the other rooms are safe but the damage to that single room will be amplifided
+		
+	}
+
+
+	// can't be undo. don't need delete room
+	public boolean buyRoom(int money) {
+		if (rooms.size() < maxRoomNum && money > 300) {
+			Set<String> existRoomNames = getExistRoomNames();
+			String roomName = h.inputNonRepeatedWord("Enter a name for the room", existRoomNames);
+			Room r = new Room(roomName);
+			rooms.add(r);
+			roomToFurMap.put(r, r.getFurnitureList());
+			nameToRoomMap.put(roomName, r);
+			intToNameMap.put(rooms.size()+1, r.getName());
+			intToNameWithSpaceMap.put(rooms.size()+1, r.getName() + " (S" + r.getSpaceUsed() + ")");
+			return true;
+		}else if (money > 300){
+			System.out.println("You do not have enough money to buy a new room.");
+			return false;
+		}else if (rooms.size() < maxRoomNum) {
+			System.out.println("You have exceeded max number of rooms to own");
+			return false;
+		}
+		return false;
+	}
+	
 
 
 

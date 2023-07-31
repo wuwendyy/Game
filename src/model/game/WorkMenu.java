@@ -4,9 +4,9 @@ import java.util.*;
 
 public enum WorkMenu {
 	
-	A(2, 30, "Work A require 2h to finish and salary is 30"),
-	B(5, 90, "Work B require 5h to finish and salary is 90"),
-	C(8, 150, "Work C require 8h to finish and salary is 150"),
+	A(2, 3, "Work A require 2 minutes to finish and salary is $3"),
+	B(5, 9, "Work B require 5 minutes to finish and salary is $9"),
+	C(8, 15, "Work C require 8 minutes to finish and salary is $15"),
 	NULL(0,0,"");
 	
 	private int duration; //time required to finish work
@@ -35,6 +35,7 @@ public enum WorkMenu {
 		int count = 0;
 		for (WorkMenu m : WorkMenu.values()) { // array from the enum
 			count++;
+			// do not print null
 			if (count < getOptionNum()) {
 				prompt += "\n" + (m.ordinal() + 1) + ": " + m.getDisplayString();
 			}
@@ -51,5 +52,31 @@ public enum WorkMenu {
 	public static int getOptionNum() {
 		return WorkMenu.values().length;
 	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 
 }
